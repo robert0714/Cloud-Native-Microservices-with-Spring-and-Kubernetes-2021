@@ -25,7 +25,7 @@ spec:
   selector:
     matchLabels:
       app: catalogue-service-app
-  replicas: 3 # tells deployment to run N pods matching the template
+  replicas: 1 # tells deployment to run N pods matching the template
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -41,17 +41,20 @@ spec:
         - name: regcred
         
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: catalogue-service-app-ingress
-  namespace: default
+  namespace: onlinestore-demo
 spec:
   rules:
   - host: demo.my-pks.cloudification.in
     http:
       paths:
-      - backend:
-          serviceName: catalogue-service
-          servicePort: 8010
-        path: /catalogue
+      - path: /catalogue
+        pathType: Prefix
+        backend:
+          service:
+            name: catalogue-service
+            port:
+              number: 8010
